@@ -1,17 +1,19 @@
 import React, { Component } from 'react';
 // import logo from '../assets/logo.svg';
 import './App.scss';
-import Login from './Login/Login';
 import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.min.css'; 
-
+import 'react-toastify/dist/ReactToastify.min.css';
+import Routes from './Routes';
+import { BrowserRouter } from 'react-router-dom';
 class App extends Component {
   render() {
     return (
-      <div className='App'>
-        <Login />
+      <BrowserRouter>
+      <div className='App'>        
+          <Routes />        
         <ToastContainer />
       </div>
+      </BrowserRouter>
     );
   }
 }

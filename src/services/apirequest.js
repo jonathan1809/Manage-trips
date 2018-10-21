@@ -17,6 +17,30 @@ export const post = async (url, body) => {
         throw response
 }
 
+export const put = async (url, body) => {
+    const response = await instance.put(url, body)
+    if (response.status === 200)
+        return await response.data
+    else
+        throw response
+}
+
+export const deleteRequest = async (url) => {
+    const response = await instance.delete(url)
+    if (response.status === 200)
+        return await response.data
+    else
+        throw response
+}
+
+export const get = async (url) => {
+    const response = await instance.get(url)
+    if (response.status === 200)
+        return await response.data
+    else
+        throw response
+}
+
 export const postFetch = async (url, body) => {
     const response = await fetch(host + url, {
         method: 'POST', // or 'PUT'

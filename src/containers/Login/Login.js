@@ -8,14 +8,16 @@ import MainButton from '../../components/UI/Button';
 import { Success, Error } from '../../components/UI/Toastify';
 import { post } from '../../services/apirequest';
 import apiRoutes from '../../config/routes';
+import Loading from '../../components/UI/Loading';
+import { Redirect } from 'react-router-dom';
 class Login extends Component {
     constructor(props) {
         super(props)
         this.state = {
             user: { adminID: 'jonathanmedina1809@hotmail.com', password: 'WannaCry1809.' },
-            showPassword: false
+            showPassword: false,
+            showProgress: false
         };
-
     }
 
     setDataHandler = (event) => {
@@ -32,27 +34,33 @@ class Login extends Component {
     };
 
     SubmitHandler = async () => {
+        this.setState({ showProgress: true })
         try {
             post(apiRoutes.login, this.state.user)
                 .then(response => {
-                    Success('gooood')
-                    console.log(response);
+                    this.setState({ showProgress: false })
+                    Success('gooood')                    
                     const user = { ...response.user };
                     const token = response.token;
                     delete user.password;
                     UtilUserData.setUser(user)
                     UtilUserData.setToken(token);
+                    this.props.history.push('/Hoteles')
                 })
         } catch (error) {
+            this.setState({ showProgress: false })
             console.error(error);
             Error('Ha ocurrido un error')
         }
     }
 
     render() {
-
+        let redirect = null;
+        if (UtilUserData.verifyIsLogged())
+            redirect = <Redirect to={this.props.match.url + 'Hoteles'} />
         return (
             <div className='MainLogin'>
+                {redirect}
                 <Row>
                     <Col className='Banner' md={6} lg={7}></Col>
                     <Col md={6} lg={5} className='Login d-flex flex-column justify-content-center align-items-center'>
@@ -64,7 +72,7 @@ class Login extends Component {
                             <InputText
                                 value={this.state.user.adminID}
                                 handle={this.setDataHandler}
-                                isInvalid={1 == 1}
+                                isInvalid={1 === 0}
                                 name='adminID'
                                 messageError={'error'}
                                 label='Correo'
@@ -73,7 +81,7 @@ class Login extends Component {
                                 value={this.state.user.password}
                                 handle={this.setDataHandler}
                                 handleShowPassword={this.handleClickShowPassword}
-                                isInvalid={1 == 1}
+                                isInvalid={1 === 0}
                                 name='password'
                                 label='Contraseña'
                                 messageError={'error'}
@@ -83,7 +91,9 @@ class Login extends Component {
                                 <a href='/'>¿Olvidaste tu contraseña?</a>
                             </div>
                             <div className='form-group'>
-                                <MainButton color='info' handle={this.SubmitHandler}>Iniciar sesión</MainButton>
+                                <MainButton color='info' handle={this.SubmitHandler}>
+                                    {this.state.showProgress ? <Loading /> : 'Iniciar sesión'}
+                                </MainButton>
                             </div>
                         </Form>
                     </Col>
