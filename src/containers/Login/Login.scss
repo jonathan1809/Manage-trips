@@ -1,0 +1,63 @@
+.MainLogin {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow: hidden;
+    .Banner {
+        background-image: url('../../assets/images/landing.jpg');
+        height: 100vh;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+
+    .Login {
+        height: auto;
+        width: 100%;
+        margin: 0;
+        padding: 0 9%;
+       
+
+        form {
+            width: 100%;
+
+            .form-group {
+                margin: 2% 0;
+
+                a {
+                    font-size: 10px;
+                    color: black;
+                    opacity: .5;
+                }
+
+                a:hover {
+                    opacity: .8;
+                }
+
+                button {
+                    margin-top: 5%;
+                }
+            }
+        }
+
+        .message {
+            padding: 0 2%;
+
+            h3 {
+                letter-spacing: 5px;
+                text-align: center;
+            }
+
+            .welcome-message {
+                text-align: center;
+                font-size: 18px;
+                color: black;
+                opacity: .5;
+            }
+        }
+
+    }
+}
