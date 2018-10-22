@@ -1,4 +1,5 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import UtilUserData from '../../config/config';
 import { Row, Col, Form } from 'reactstrap'
 import './Login.scss'
@@ -11,6 +12,8 @@ import apiRoutes from '../../config/routes';
 import Loading from '../../components/UI/Loading';
 import { Redirect } from 'react-router-dom';
 import validator from 'validator';
+import { STORE_USER_DATA } from '../../services/redux/store/login/actions';
+
 class Login extends Component {
     constructor(props) {
         super(props)
@@ -23,7 +26,7 @@ class Login extends Component {
             messageErrorPassword: '',
             messageErrorAdminID: ''
         };
-
+        console.log(this.props)
     }
 
     setDataHandler = (event) => {
@@ -81,6 +84,7 @@ class Login extends Component {
                 delete user.password;
                 UtilUserData.setUser(user)
                 UtilUserData.setToken(token);
+                this.props.onSaveData(user)
                 this.props.history.push('/Hoteles')
             })
             .catch(error => {
@@ -88,7 +92,7 @@ class Login extends Component {
                     Error(error.response.data.Message)
                 else
                     Error('Ha ocurrido un error')
-                this.setState({ showProgress: false })                
+                this.setState({ showProgress: false })
             })
     }
 
@@ -142,4 +146,15 @@ class Login extends Component {
     }
 }
 
-export default Login;
+const mapStateToProps = state => {
+    return {
+        user: state.login.user
+    };
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        onSaveData: (user) => dispatch({ type: STORE_USER_DATA, payload: { ...user } })
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

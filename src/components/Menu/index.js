@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
@@ -18,7 +19,7 @@ const drawerWidth = 240;
 const styles = theme => ({
     root: {
         flexGrow: 1,
-        
+
         zIndex: 1,
         overflow: 'hidden',
         position: 'relative',
@@ -65,7 +66,7 @@ const styles = theme => ({
         [theme.breakpoints.up('sm')]: {
             width: theme.spacing.unit * 9,
         },
-       
+
     },
     toolbar: {
         display: 'flex',
@@ -78,13 +79,15 @@ const styles = theme => ({
         flexGrow: 1,
         backgroundColor: theme.palette.background.default,
         padding: theme.spacing.unit * 3,
-        width:'100%'
+        width: '100%'
     },
 });
 
 class MenuDrawer extends React.Component {
+
     state = {
         open: true,
+        user: {}
     };
 
     handleDrawerOpen = () => {
@@ -94,7 +97,9 @@ class MenuDrawer extends React.Component {
     handleDrawerClose = () => {
         this.setState({ open: false });
     };
-
+    componentWillReceiveProps(nextProps) {        
+        this.setState({ user: { ...nextProps.user } })
+    }
     render() {
         const { classes, theme } = this.props;
 
@@ -114,7 +119,7 @@ class MenuDrawer extends React.Component {
                             <MenuIcon />
                         </IconButton>
                         <Typography variant='h6' color='inherit' noWrap>
-                            Excurciones lola
+                            Excurciones lola {this.state.user.adminID}
                         </Typography>
                     </Toolbar>
                 </AppBar>
@@ -124,7 +129,7 @@ class MenuDrawer extends React.Component {
                         paper: classNames(classes.drawerPaper, !this.state.open && classes.drawerPaperClose),
                     }}
                     open={this.state.open}
-                    
+
                 >
                     <div className={classes.toolbar}>
                         <IconButton onClick={this.handleDrawerClose}>
@@ -147,6 +152,10 @@ MenuDrawer.propTypes = {
     classes: PropTypes.object.isRequired,
     theme: PropTypes.object.isRequired,
 };
-
-export default withRouter(withStyles(styles, { withTheme: true })(MenuDrawer));
+const mapStateToProps = state => {
+    return {
+        user: state.login.user
+    };
+}
+export default connect(mapStateToProps)(withRouter(withStyles(styles, { withTheme: true })(MenuDrawer)));
 

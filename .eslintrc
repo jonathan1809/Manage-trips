@@ -32,6 +32,7 @@
         ],
         "react/jsx-pascal-case":2,
         "no-console":"off",
+        "no-var":"error",
         "babel/no-invalid-this": 1,              
         "babel/no-unused-expressions": 1,
         "no-unused-vars": ["error", { "varsIgnorePattern": "[iI]gnored" }],
