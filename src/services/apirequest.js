@@ -11,10 +11,11 @@ instance.defaults.headers.common['Content-Type'] = 'application/json';
 
 export const post = async (url, body) => {
     const response = await instance.post(url, body)
+   
     if (response.status === 200)
         return await response.data
     else
-        throw response
+        throw new Error(response.data)
 }
 
 export const put = async (url, body) => {

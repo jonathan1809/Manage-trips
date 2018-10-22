@@ -10,14 +10,20 @@ import { post } from '../../services/apirequest';
 import apiRoutes from '../../config/routes';
 import Loading from '../../components/UI/Loading';
 import { Redirect } from 'react-router-dom';
+import validator from 'validator';
 class Login extends Component {
     constructor(props) {
         super(props)
         this.state = {
             user: { adminID: 'jonathanmedina1809@hotmail.com', password: 'WannaCry1809.' },
             showPassword: false,
-            showProgress: false
+            showProgress: false,
+            isInvalidPassword: false,
+            isInvalidEmail: false,
+            messageErrorPassword: '',
+            messageErrorAdminID: ''
         };
+
     }
 
     setDataHandler = (event) => {
@@ -33,25 +39,57 @@ class Login extends Component {
         this.setState(state => ({ showPassword: !state.showPassword }));
     };
 
-    SubmitHandler = async () => {
-        this.setState({ showProgress: true })
-        try {
-            post(apiRoutes.login, this.state.user)
-                .then(response => {
-                    this.setState({ showProgress: false })
-                    Success('gooood')                    
-                    const user = { ...response.user };
-                    const token = response.token;
-                    delete user.password;
-                    UtilUserData.setUser(user)
-                    UtilUserData.setToken(token);
-                    this.props.history.push('/Hoteles')
-                })
-        } catch (error) {
-            this.setState({ showProgress: false })
-            console.error(error);
-            Error('Ha ocurrido un error')
+    validateData() {
+        if (!validator.isEmail(this.state.user.adminID)) {
+            this.setState({ messageErrorAdminID: 'El correo no es valido.', isInvalidEmail: true })
+            return false;
         }
+        if (validator.isEmpty(this.state.user.adminID)) {
+            this.setState({ messageErrorAdminID: 'Ingresa un correo.', isInvalidEmail: true })
+            return false
+        }
+        if (validator.isEmpty(this.state.user.password)) {
+            this.setState({ messageErrorPassword: 'Ingresa una contraseña', isInvalidPassword: true })
+            return false
+        }
+        if (!validator.isLength(this.state.user.password, { min: 8, max: 15 })) {
+            this.setState({ messageErrorPassword: 'La contraseña es muy corta.', isInvalidPassword: true })
+            return false
+        }
+        return true
+    }
+    SubmitHandler = async (event) => {
+
+        event.preventDefault();
+        this.setState({
+            showProgress: true,
+            isInvalidPassword: false,
+            isInvalidEmail: false,
+            messageErrorPassword: '',
+            messageErrorAdminID: ''
+        })
+        if (!this.validateData()) {
+            this.setState({ showProgress: false })
+            return;
+        }
+        post(apiRoutes.login, this.state.user)
+            .then(response => {
+                this.setState({ showProgress: false })
+                Success('gooood')
+                const user = { ...response.user };
+                const token = response.token;
+                delete user.password;
+                UtilUserData.setUser(user)
+                UtilUserData.setToken(token);
+                this.props.history.push('/Hoteles')
+            })
+            .catch(error => {
+                if (error.response.data.Message)
+                    Error(error.response.data.Message)
+                else
+                    Error('Ha ocurrido un error')
+                this.setState({ showProgress: false })                
+            })
     }
 
     render() {
@@ -68,30 +106,30 @@ class Login extends Component {
                             <h3>Excursiones Lola</h3>
                             <p className='welcome-message'>¡Bienvenido de nuevo! Por favor inicia sesión con tu cuenta.</p>
                         </section>
-                        <Form >
+                        <Form onSubmit={this.SubmitHandler}>
                             <InputText
                                 value={this.state.user.adminID}
                                 handle={this.setDataHandler}
-                                isInvalid={1 === 0}
+                                isInvalid={this.state.isInvalidEmail}
                                 name='adminID'
-                                messageError={'error'}
+                                messageError={this.state.messageErrorAdminID}
                                 label='Correo'
                             />
                             <InputPassword
                                 value={this.state.user.password}
                                 handle={this.setDataHandler}
                                 handleShowPassword={this.handleClickShowPassword}
-                                isInvalid={1 === 0}
+                                isInvalid={this.state.isInvalidPassword}
                                 name='password'
                                 label='Contraseña'
-                                messageError={'error'}
+                                messageError={this.state.messageErrorPassword}
                                 showPassword={this.state.showPassword}
                             />
                             <div className='form-group'>
                                 <a href='/'>¿Olvidaste tu contraseña?</a>
                             </div>
                             <div className='form-group'>
-                                <MainButton color='info' handle={this.SubmitHandler}>
+                                <MainButton color='info' >
                                     {this.state.showProgress ? <Loading /> : 'Iniciar sesión'}
                                 </MainButton>
                             </div>
