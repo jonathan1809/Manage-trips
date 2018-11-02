@@ -6,13 +6,11 @@ import './Login.scss'
 import InputText from '../../components/UI/InputText';
 import InputPassword from '../../components/UI/InputPassword';
 import MainButton from '../../components/UI/Button';
-import { Success, Error } from '../../components/UI/Toastify';
-import { post } from '../../services/apirequest';
-import apiRoutes from '../../config/routes';
 import Loading from '../../components/UI/Loading';
 import { Redirect } from 'react-router-dom';
 import validator from 'validator';
-import { STORE_USER_DATA } from '../../services/redux/store/login/actions';
+import * as actions from '../../services/redux/login'
+
 
 class Login extends Component {
     constructor(props) {
@@ -45,7 +43,7 @@ class Login extends Component {
     validateData() {
         if (!validator.isEmail(this.state.user.adminID)) {
             this.setState({ messageErrorAdminID: 'El correo no es valido.', isInvalidEmail: true })
-            return false;
+            return false
         }
         if (validator.isEmpty(this.state.user.adminID)) {
             this.setState({ messageErrorAdminID: 'Ingresa un correo.', isInvalidEmail: true })
@@ -59,6 +57,8 @@ class Login extends Component {
             this.setState({ messageErrorPassword: 'La contraseña es muy corta.', isInvalidPassword: true })
             return false
         }
+        if (this.state.messageErrorAdminID.length > 0 || this.state.messageErrorPassword.length > 0)
+            return false
         return true
     }
     SubmitHandler = async (event) => {
@@ -72,33 +72,16 @@ class Login extends Component {
             messageErrorAdminID: ''
         })
         if (!this.validateData()) {
-            this.setState({ showProgress: false })
             return;
         }
-        post(apiRoutes.login, this.state.user)
-            .then(response => {
-                this.setState({ showProgress: false })
-                Success('gooood')
-                const user = { ...response.user };
-                const token = response.token;
-                delete user.password;
-                UtilUserData.setUser(user)
-                UtilUserData.setToken(token);
-                this.props.onSaveData(user)
-                this.props.history.push('/Hoteles')
-            })
-            .catch(error => {
-                if (error.response.data.Message)
-                    Error(error.response.data.Message)
-                else
-                    Error('Ha ocurrido un error')
-                this.setState({ showProgress: false })
-            })
+        await this.props.loginUser(this.state.user)
+
     }
 
     render() {
+
         let redirect = null;
-        if (UtilUserData.verifyIsLogged())
+        if (this.props.isLogged)
             redirect = <Redirect to={this.props.match.url + 'Hoteles'} />
         return (
             <div className='MainLogin'>
@@ -134,7 +117,7 @@ class Login extends Component {
                             </div>
                             <div className='form-group'>
                                 <MainButton color='info' >
-                                    {this.state.showProgress ? <Loading /> : 'Iniciar sesión'}
+                                    {this.props.loading ? <Loading /> : 'Iniciar sesión'}
                                 </MainButton>
                             </div>
                         </Form>
@@ -148,13 +131,15 @@ class Login extends Component {
 
 const mapStateToProps = state => {
     return {
-        user: state.login.user
+        loading: state.login.loading,
+        isLogged: state.login.isLogged,
+        user: state.login.user,
+        isError: state.login.error !== null ? false : true,
+        error: state.login.error
     };
 }
 
-const mapDispatchToProps = dispatch => {
-    return {
-        onSaveData: (user) => dispatch({ type: STORE_USER_DATA, payload: { ...user } })
-    }
+const mapDispatchToProps = {
+    loginUser: (user) => actions.login(user)
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

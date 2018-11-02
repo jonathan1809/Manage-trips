@@ -1,12 +1,12 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
 import Hotels from '../../containers/Hotels';
-import Menu from '../../components/Menu';
+import Layout from '../../containers/Layout';
 const index = (props) => {
     return (
-        <Menu>
+        <Layout>
             <Route path={props.match.url + 'Hoteles'} exact component={Hotels} />
-        </Menu>
+        </Layout>
     )
 }
 export default index

@@ -13,9 +13,10 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import Items from './items';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Redirect } from 'react-router-dom';
 import './index.scss'
 const drawerWidth = 240;
+
 const styles = theme => ({
     root: {
         flexGrow: 1,
@@ -83,7 +84,7 @@ const styles = theme => ({
     },
 });
 
-class MenuDrawer extends React.Component {
+class Layout extends React.Component {
 
     state = {
         open: true,
@@ -97,14 +98,15 @@ class MenuDrawer extends React.Component {
     handleDrawerClose = () => {
         this.setState({ open: false });
     };
-    componentWillReceiveProps(nextProps) {        
+    componentWillReceiveProps(nextProps) {
         this.setState({ user: { ...nextProps.user } })
     }
     render() {
         const { classes, theme } = this.props;
-
+        const redirect = this.props.isLogged ? null : <Redirect to={'Login'} />
         return (
             <div className={classes.root}>
+                {redirect}
                 <AppBar
                     position='absolute'
                     className={classNames(classes.appBar, this.state.open && classes.appBarShift)}
@@ -119,7 +121,7 @@ class MenuDrawer extends React.Component {
                             <MenuIcon />
                         </IconButton>
                         <Typography variant='h6' color='inherit' noWrap>
-                            Excurciones lola {this.state.user.adminID}
+                            Excurciones lola {this.props.user.adminID}
                         </Typography>
                     </Toolbar>
                 </AppBar>
@@ -148,14 +150,15 @@ class MenuDrawer extends React.Component {
         );
     }
 }
-MenuDrawer.propTypes = {
+Layout.propTypes = {
     classes: PropTypes.object.isRequired,
     theme: PropTypes.object.isRequired,
 };
 const mapStateToProps = state => {
     return {
-        user: state.login.user
+        user: state.login.user,
+        isLogged: state.login.isLogged
     };
 }
-export default connect(mapStateToProps)(withRouter(withStyles(styles, { withTheme: true })(MenuDrawer)));
+export default connect(mapStateToProps)(withRouter(withStyles(styles, { withTheme: true })(Layout)));
 
