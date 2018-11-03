@@ -2,7 +2,7 @@ import { Success, Error } from '../../../components/UI/Toastify/index';
 import apiRoutes from '../../apiRequest/routes';
 import { post } from '../../apiRequest/apirequest';
 import UtilUserData from '../../../config/config';
-import { USER_LOGIN_START, USER_LOGIN_SUCCESS, USER_LOGIN_FAIL, USER_LOGOUT } from './actionTypes';
+import { USER_LOGIN_START, USER_LOGIN_SUCCESS, USER_LOGIN_FAIL, USER_LOGOUT, USER_EXPIRED_TOKEN } from './actionTypes';
 
 export const loginStart = () => {
     return {
@@ -31,11 +31,19 @@ export const logOut = () => {
         type: USER_LOGOUT
     }
 }
+export const sessionExpired = () => {
+    Error('Tu sesión ha expirado, debes de volver a iniciar sesión');
+    UtilUserData.cleanStorage()
+    return {
+        type: USER_EXPIRED_TOKEN
+    }
+}
 export const login = (userCredential) => {
     return dispatch => {
         dispatch(loginStart())
         post(apiRoutes.login, userCredential)
             .then(response => {
+                console.log(response)
                 Success('Welcome')
                 const user = { ...response.user };
                 const token = response.token;

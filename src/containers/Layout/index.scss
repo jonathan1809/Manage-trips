@@ -1,4 +1,10 @@
-.rootMenuDrawer{
+.rootMenuDrawer {
     height: 100vh;
     overflow: hidden;
+}
+
+@media screen and (min-width:320px) {
+    .content-layout {
+        overflow-x: scroll;
+    }
 }

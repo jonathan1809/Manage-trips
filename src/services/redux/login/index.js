@@ -1,2 +1,2 @@
-export { login, loginFail, loginStart, loginSuccess, logOut } from './actionCreators'
+export { login, loginFail, loginStart, loginSuccess, logOut, sessionExpired } from './actionCreators'
 export { USER_LOGIN_START, USER_LOGIN_FAIL, USER_LOGIN_SUCCESS, USER_LOGOUT, UPDATE_USER_DATA } from './actionTypes'

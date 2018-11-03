@@ -1,13 +1,13 @@
 import { Success, Error } from '../../../components/UI/Toastify/index';
 import apiRoutes from '../../apiRequest/routes';
 import { post, get } from '../../apiRequest/apirequest';
-import UtilUserData from '../../../config/config';
 import * as actionTypes from './actionTypes';
+import { sessionExpired } from '../login'
 
 export const getHotels = () => {
     return dispatch => {
         dispatch({
-            type: actionTypes.FETCH_HOTELS_START,
+            type: actionTypes.REQUEST_HOTEL_START,
             loading: true
         })
         get(apiRoutes.hotel)
@@ -22,13 +22,15 @@ export const getHotels = () => {
             })
             .catch(error => {
 
+                if (error === 401) {
+                    dispatch(sessionExpired())
+                }
                 if (error.response)
                     Error(error.response.data.Message)
                 else
                     Error('Ha ocurrido un error')
-                console.error(error)
                 dispatch({
-                    type: actionTypes.FETCH_HOTELS_FAIL,
+                    type: actionTypes.REQUEST_HOTEL_FAIL,
                     error: error
                 })
             })

@@ -1,0 +1,1 @@
+export const CHANGE_MENU_VIEW = 'CHANGE_MENU_VIEW'

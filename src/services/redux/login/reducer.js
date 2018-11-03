@@ -32,6 +32,8 @@ const loginReducer = (state = initState, action) => {
             return updateObject(state, { error: action.error, loading: false })
         case actionTypes.USER_LOGOUT:
             return updateObject(state, { isLogged: false, token: '', user: { adminID: '', image: '', typeUser: '00', } })
+        case actionTypes.USER_EXPIRED_TOKEN:
+            return updateObject(state, { isLogged: false })
         default:
             return state;
     }

@@ -8,50 +8,79 @@ const instance = axios.create({
 });
 
 instance.defaults.headers.common['Content-Type'] = 'application/json';
+instance.defaults.headers.common['Accept'] = 'application/json';
 
 export const post = async (url, body) => {
     instance.defaults.headers.common['Authorization'] = UtilUserData.getToken();
-    const response = await instance.post(url, body)
 
-    if (response.status === 200)
-        return await response.data
-    else
-        throw new Error(response.data)
+    try {
+        const response = await instance.post(url, body)
+        return await response.data;
+    }
+    catch (ex) {
+        if (ex.message.includes('401')) {
+            throw 401
+        }
+        throw ex
+    }
 }
 
 export const put = async (url, body) => {
     instance.defaults.headers.common['Authorization'] = UtilUserData.getToken();
-    const response = await instance.put(url, body)
-    if (response.status === 200)
-        return await response.data
-    else
-        throw response
+    try {
+        const response = await instance.put(url, body)
+        return await response.data;
+    }
+    catch (ex) {
+        if (ex.message.includes('401')) {
+            throw 401
+        }
+        throw ex
+    }
 }
 
 export const deleteRequest = async (url, id) => {
     instance.defaults.headers.common['Authorization'] = UtilUserData.getToken();
-    const response = await instance.delete(url + id)
-    if (response.status === 200)
-        return await response.data
-    else
-        throw response
+    try {
+        const response = await instance.delete(url + id)
+        return await response.data;
+    }
+    catch (ex) {
+        if (ex.message.includes('401')) {
+            throw 401
+        }
+        throw ex
+    }
 }
 
 export const get = async (url) => {
     instance.defaults.headers.common['Authorization'] = UtilUserData.getToken();
-    const response = await instance.get(url)
-    if (response.status === 200)
-        return await response.data
-    else
-        throw response
+    const algo = '';
+    try {
+        const response = await instance.get(url)
+        return await response.data;
+    }
+    catch (ex) {
+        if (ex.message.includes('401')) {
+            throw 401
+        }
+        throw ex
+    }
+
+
 }
 export const getWithParams = async (url, params) => {
     instance.defaults.headers.common['Authorization'] = UtilUserData.getToken();
-    const response = await instance.get(url + params)
-    if (response.status === 200)
-        return await response.data
-    else
-        throw response
+    try {
+        const response = await instance.get(url + params)
+        return await response.data;
+    }
+    catch (ex) {
+        if (ex.message.includes('401')) {
+            throw 401
+        }
+        throw ex
+    }
 }
 export const postFetch = async (url, body) => {
     const response = await fetch(host + url, {

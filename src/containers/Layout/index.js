@@ -105,7 +105,7 @@ class Layout extends React.Component {
         const { classes, theme } = this.props;
         const redirect = this.props.isLogged ? null : <Redirect to={'Login'} />
         return (
-            <div className={classes.root}>
+            <div className={classes.root + ' rootMenuDrawer'}>
                 {redirect}
                 <AppBar
                     position='absolute'
@@ -142,7 +142,7 @@ class Layout extends React.Component {
                     <Items {...this.props} />
 
                 </Drawer>
-                <main className={classes.content}>
+                <main className={classes.content + ' content-layout'}>
                     <div className={classes.toolbar} />
                     {this.props.children}
                 </main>

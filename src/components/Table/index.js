@@ -68,7 +68,7 @@ class EnhancedTableHead extends React.Component {
                 key={row.id}
                 numeric={row.numeric}
                 padding={row.disablePadding ? 'none' : 'default'}
-                sortDirection={orderBy === row.id ? order : false}
+                sortDirection={orderBy.toLowerCase() === row.id.toLowerCase() ? order : false}
               >
                 <Tooltip
                   title='Ordenar'
@@ -76,7 +76,7 @@ class EnhancedTableHead extends React.Component {
                   enterDelay={300}
                 >
                   <TableSortLabel
-                    active={orderBy === row.id}
+                    active={orderBy.toLowerCase() === row.id.toLowerCase()}
                     direction={order}
                     onClick={this.createSortHandler(row.id)}
                   >
@@ -189,23 +189,27 @@ const styles = theme => ({
 class GeneralTable extends React.Component {
   constructor(props) {
     super(props)
-    console.log(this.props.data)
     this.state = {
       order: 'asc',
-      orderBy: 'calories',
+      orderBy: '',
       selected: [],
-      data: this.props.data,
+      data: [],
       page: 0,
       rowsPerPage: 5,
     };
   }
 
+  componentDidMount() {    
+    const keys = this.props.data.length > 0 ? Object.keys(this.props.data[0]) : [];
+    const orderBy = keys.length > 0 ? keys[1] : '';     
+    this.setState({ data: this.props.data, orderBy })
+  }
 
   handleRequestSort = (event, property) => {
     const orderBy = property;
     let order = 'desc';
 
-    if (this.state.orderBy === property && this.state.order === 'desc') {
+    if (this.state.orderBy.toLowerCase() === property.toLowerCase() && this.state.order === 'desc') {
       order = 'asc';
     }
 
